@@ -1,0 +1,75 @@
+JSP FILE
+
+<form class="mx-2 my-auto d-inline w-20" action="search.html" method="POST">
+                                        <div class="input-group">
+                                            <input list="category" name="browser" class="form-rounded" placeholder="Search By">
+                                            <datalist id="category">
+                                              <option value="Salt Name" selected>Salt Name</option>
+                                              <option value="Medicine Name">Medicine Name</option>
+                                              <option value="Brand">Brand</option>
+                                             </datalist>    
+
+
+                                                    &emsp;&nbsp;&nbsp;
+                                                    <input type="text" name="category" value="Medicine Name" class="form-rounded border border-right-0" placeholder="Salt/Medicine/Brand">
+                                                    <span class="input-group-append">
+                                                    <button class="btn btn-outline-secondary border border-left-0" type="submit">
+                                                        <i class="fa fa-search"></i>                              
+                                                    </button>
+                                                  </span>
+
+                                                  &emsp;&emsp;
+                                                      <select name="select-city" onchange="location = this.value;">
+</form>
+
+Controller
+
+@RequestMapping(value="search.html", method= RequestMethod.POST)
+	public ModelAndView searchMedicine(@ModelAttribute Medicine medicine, @RequestParam("browser") String search_by,@RequestParam("category") String search_value){
+		ModelAndView modelAndView = new ModelAndView();
+		System.out.println(search_by);
+		System.out.println(search_value);
+			List<Medicine> medicines= medicineService.searchMedicineByValues(search_by, search_value);
+			modelAndView.addObject("medicines", medicines);
+			modelAndView.setViewName("Admin-Control");
+			return modelAndView;
+	
+	}
+
+DAO
+
+@Transactional
+	public List<Medicine> searchMedicineByValues(String search, String search_value) {
+		// TODO Auto-generated method stub
+		Session session =null;
+		String query;
+		if("Salt Name".equals(search)){
+		query="from Medicine where saltName=?";
+		org.hibernate.query.Query<Medicine> query2 = null;
+		session=sessionFacotry.openSession();
+		query2=session.createQuery(query);
+		query2.setParameter(0, search_value);
+		List<Medicine> list=query2.getResultList();
+		return list;
+		}
+		else if("Medicine Name".equals(search)){
+	    query="from Medicine where medName=?";
+	    org.hibernate.query.Query<Medicine> query2 = null;
+		session=sessionFacotry.openSession();
+		query2=session.createQuery(query);
+		query2.setParameter(0, search_value);
+		List<Medicine> list=query2.getResultList();
+		return list;
+		}
+		else{
+		query="from Medicine where brand=?";
+		org.hibernate.query.Query<Medicine> query2 = null;
+		session=sessionFacotry.openSession();
+		query2=session.createQuery(query);
+		query2.setParameter(0, search_value);
+		List<Medicine> list=query2.getResultList();
+		return list;
+		}
+	
+	}
+
